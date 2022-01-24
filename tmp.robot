@@ -1,8 +1,8 @@
 *** Settings ***
-Library    RPA.Browser.Selenium
+Library     SeleniumLibrary     run_on_failure=None
 
 *** Tasks ***
 Login as user
-    Open available Browser    https://example.com
+    Open Browser     https://example.com    ff  service_log_path=${{os.path.devnull}}
     # Input text    id:user-name    ${USERNAME}
     # Input text    id:password     ${PASSWORD}

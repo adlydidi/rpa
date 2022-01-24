@@ -1,12 +1,11 @@
 ==============================================================================
 Tmp                                                                           
 ==============================================================================
-Login as user                                                         | FAIL |
-No keyword with name 'Open available Browser' found.
+Login as user                                                         | PASS |
 ------------------------------------------------------------------------------
-Tmp                                                                   | FAIL |
-1 task, 0 passed, 1 failed
+Tmp                                                                   | PASS |
+1 task, 1 passed, 0 failed
 ==============================================================================
-Output:  C:\rpa\output.xml
-Log:     C:\rpa\log.html
-Report:  C:\rpa\report.html
+Output:  /Users/adlydidi/projects/pythonprojects/rpa/output.xml
+Log:     /Users/adlydidi/projects/pythonprojects/rpa/log.html
+Report:  /Users/adlydidi/projects/pythonprojects/rpa/report.html
