@@ -8,9 +8,10 @@ from sys import stderr
 from fastapi import FastAPI, Request, Response
 from typing import List, Optional
 import robot
-import serverstatus
+# import serverstatus
 import database as db
 import yaml
+import uvicorn
 
 
 app = FastAPI()
@@ -22,10 +23,10 @@ async def read_root():
     return {"hello" : "hello RPA"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    print(q)
-    return {"item_id": item_id, "q": q}
+# @app.get("/items/{item_id}")
+# def read_item(item_id: int, q: Optional[str] = None):
+#     print(q)
+#     return {"item_id": item_id, "q": q}
 
 @app.get("/status/")
 async def getStatus():
@@ -141,3 +142,8 @@ async def run_rpabot(filename):
     except:
         return {"message" : "ERROR"}
     return None
+
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8881)

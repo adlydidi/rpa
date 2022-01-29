@@ -81,9 +81,9 @@ def selectAllClients():
 # # # print(myintip)
 
 # # registerClient('TESTPC', myip )
-# registerClient('TESTPC', '192.168.1.2')
+# registerClient('TESTPC', '192.168.1.1')
 
 
 # r = selectAllClients()
-# r = unregisterClient('TESTPC', '192.168.1.2')
-# # print(r)
+# r = unregisterClient('TESTPC', '192.168.1.1')
+# print(r)
