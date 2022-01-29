@@ -1,6 +1,10 @@
+from datetime import datetime
 from distutils.log import ERROR
 from fileinput import filename
 import json
+import os
+from sqlite3 import Timestamp
+from sys import stderr
 from fastapi import FastAPI, Request, Response
 from typing import List, Optional
 import robot
@@ -34,6 +38,7 @@ async def getStatus():
         myjson = {  "HostName" : row[0], 
                     "ClientIP" : ip,
                     "ClientStatus" : row[2]}
+        # print(row)
         connJson.append(myjson)
     return connJson
 
@@ -79,11 +84,20 @@ async def get_body(request: Request):
         f.close()
         try:
             # print("running robot ... ")
-            robotresponse = await run_rpabot(fileName)
-            # print(robotresponse)
+            ### get the timestamp before rpa call
+            rpaCallTime= datetime.timestamp(datetime.now())
+            await run_rpabot(fileName)
+
+            # print(rpaCallTime)
+            ### get the output.xml files timestamp from os
+            timesOutputXML = os.path.getmtime('output.xml')
+            # print(timesOutputXML)
+
             ### raises error if cannot run robot
-            if robotresponse['message'] == "ERROR": 
+            ### if rpa call time is greater than the output.xml --> the file was created from another run
+            if rpaCallTime > timesOutputXML: 
                 raise Exception(".. cannot run ... ")
+
             with open('output.xml', 'r') as xml:
                 data = xml.read()
                 # print(data)
@@ -98,7 +112,6 @@ async def get_body(request: Request):
         #         # print(data)
         #         xml.close()
         #         return Response(content=data, media_type="application/xml")
-
         # except:
         #     return {"message" : "cannot read XML"}
     return {"message" : "something went wrong perhaps ... "}
@@ -123,7 +136,8 @@ async def read_yaml():
 ### run the robot        
 async def run_rpabot(filename):
     try:
-        robot.run_cli(['-Vtmp.yaml', filename], exit=True)
+        # robot.run_cli(['-Vtmp.yaml', filename], exit=False)
+        robot.run(filename, variablefile='tmp.yaml')
     except:
         return {"message" : "ERROR"}
     return None

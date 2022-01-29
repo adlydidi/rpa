@@ -7,5 +7,5 @@ Login as user
     # Input text    id:user-name    ${USERNAME}
     # Input text    id:password     ${PASSWORD}
     # Open Browser     https://example.com  ff  service_log_path=${{os.path.devnull}}
-    # Sleep   60s
+    # Sleep   10s
     Close Browser

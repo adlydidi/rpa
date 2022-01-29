@@ -71,19 +71,19 @@ def selectAllClients():
     return rows
 
 
-dbInit = initDB()
-# print(dbInit)
-# # # myip = ipaddress.IPv4Address('192.168.1.1')
-# myip = '192.168.1.1'
-# myipint = ip2int(myip)
-# # print(myipint)
-# myintip = int2ip(myipint)
-# # print(myintip)
+# dbInit = initDB()
+# # print(dbInit)
+# # # # myip = ipaddress.IPv4Address('192.168.1.1')
+# # myip = '192.168.1.1'
+# # myipint = ip2int(myip)
+# # # print(myipint)
+# # myintip = int2ip(myipint)
+# # # print(myintip)
 
-# registerClient('TESTPC', myip )
-registerClient('TESTPC', '192.168.1.2')
+# # registerClient('TESTPC', myip )
+# registerClient('TESTPC', '192.168.1.2')
 
 
-r = selectAllClients()
-r = unregisterClient('TESTPC', '192.168.1.2')
-print(r)
+# r = selectAllClients()
+# r = unregisterClient('TESTPC', '192.168.1.2')
+# # print(r)
