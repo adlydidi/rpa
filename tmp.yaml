@@ -1,5 +1,1 @@
-filename: tmp.robot
-variable:
-- var1: helloo
-  var2: 123
-  var3: ${USERNAME}
+urlname: https://pinetworks.net
