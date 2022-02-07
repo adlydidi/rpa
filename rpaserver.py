@@ -1,14 +1,8 @@
 from datetime import datetime
-# from distutils.log import ERROR
-from fileinput import filename
 import json
 import os
-from sqlite3 import Timestamp
-from sys import stderr
 from fastapi import FastAPI, Request, Response
-from typing import List, Optional
 import robot
-# import serverstatus
 import database as db
 import yaml
 import uvicorn
@@ -17,6 +11,7 @@ import uvicorn
 app = FastAPI()
 
 
+#### start service
 
 @app.get("/")
 async def read_root():
@@ -57,6 +52,7 @@ async def getStatus():
 #### checks the json and run the robot
 @app.post("/dp/")
 async def get_body(request: Request):
+    rpaStartTime = datetime.timestamp(datetime.now())
     with open('tmp.yaml', 'w') as f:
         fileName = ""
         ### converts to json to string
@@ -134,8 +130,9 @@ async def read_yaml():
         ylist= yaml.load(r, Loader=yaml.FullLoader)
         print(ylist)
 
+
 ### run the robot        
-async def run_rpabot(filename):
+async def run_rpabot(filename):    
     try:
         # robot.run_cli(['-Vtmp.yaml', filename], exit=False)
         robot.run(filename, variablefile='tmp.yaml')
