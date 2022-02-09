@@ -130,3 +130,6 @@ dmypy.json
 
 # Ignore the virtual env .rpa
 /.rpa
+
+# Ignore exe
+*.exe
