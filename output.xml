@@ -1,32 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 4.1.3 (Python 3.9.10 on darwin)" generated="20220130 01:23:22.761" rpa="true" schemaversion="2">
-<suite id="s1" name="Tmp" source="/Users/adlydidi/projects/pythonprojects/rpa/tmp.robot">
-<test id="s1-t1" name="Login as user">
+<robot generator="Robot 4.1.3 (Python 3.9.10 on darwin)" generated="20220210 02:43:49.281" rpa="false" schemaversion="2">
+<suite id="s1" name="T" source="/Users/adlydidi/projects/pythonprojects/rpa/t.robot">
+<kw name="Start Browser" type="SETUP">
+<doc>Start firefox browser on selenium grid</doc>
 <kw name="Open Browser" library="SeleniumLibrary">
-<arg>${urlname}</arg>
-<arg>headlessfirefox</arg>
-<arg>service_log_path=${{os.path.devnull}}</arg>
+<arg>${SERVER}</arg>
+<arg>${BROWSER}</arg>
+<arg>None</arg>
+<arg>http://localhost:4444/wd/hub</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<msg timestamp="20220130 01:23:22.840" level="INFO">Opening browser 'headlessfirefox' to base url 'https://google.net'.</msg>
-<msg timestamp="20220130 01:23:22.840" level="INFO">Browser driver log file created to: /dev/null</msg>
-<status status="PASS" starttime="20220130 01:23:22.839" endtime="20220130 01:23:29.155"/>
+<msg timestamp="20220210 02:43:49.359" level="INFO">Opening browser 'chrome' to base url 'https://google.com' through remote server at 'http://localhost:4444/wd/hub'.</msg>
+<status status="PASS" starttime="20220210 02:43:49.359" endtime="20220210 02:43:54.200"/>
 </kw>
-<kw name="Close Browser" library="SeleniumLibrary">
-<doc>Closes the current browser.</doc>
-<status status="PASS" starttime="20220130 01:23:29.155" endtime="20220130 01:23:29.564"/>
+<status status="PASS" starttime="20220210 02:43:49.359" endtime="20220210 02:43:54.200"/>
 </kw>
-<status status="PASS" starttime="20220130 01:23:22.839" endtime="20220130 01:23:29.564"/>
+<test id="s1-t1" name="Check page title">
+<kw name="Title Should Be" library="SeleniumLibrary">
+<arg>Google</arg>
+<doc>Verifies that the current page title equals ``title``.</doc>
+<msg timestamp="20220210 02:43:54.241" level="INFO">Page title is 'Google'.</msg>
+<status status="PASS" starttime="20220210 02:43:54.200" endtime="20220210 02:43:54.241"/>
+</kw>
+<doc>Check the page title</doc>
+<status status="PASS" starttime="20220210 02:43:54.200" endtime="20220210 02:43:54.241"/>
 </test>
-<status status="PASS" starttime="20220130 01:23:22.764" endtime="20220130 01:23:29.565"/>
+<kw name="Close Browser" library="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" starttime="20220210 02:43:54.241" endtime="20220210 02:43:54.409"/>
+</kw>
+<doc>This is just an example</doc>
+<meta name="VERSION">1.0</meta>
+<status status="PASS" starttime="20220210 02:43:49.284" endtime="20220210 02:43:54.409"/>
 </suite>
 <statistics>
 <total>
-<stat pass="1" fail="0" skip="0">All Tasks</stat>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
 </total>
 <tag>
 </tag>
 <suite>
-<stat pass="1" fail="0" skip="0" id="s1" name="Tmp">Tmp</stat>
+<stat pass="1" fail="0" skip="0" id="s1" name="T">T</stat>
 </suite>
 </statistics>
 <errors>
