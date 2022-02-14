@@ -1,9 +1,11 @@
 from datetime import datetime
+from importlib.resources import path
 import json
 import os
-from fastapi import FastAPI, Request, Response
+import re
+from fastapi import FastAPI, Request, Response,  HTTPException
 import robot
-import database as db
+# import database as db
 import yaml
 import uvicorn
 
@@ -23,20 +25,20 @@ async def read_root():
 #     print(q)
 #     return {"item_id": item_id, "q": q}
 
-@app.get("/status/")
-async def getStatus():
-    # serverstatus.getStats()
-    ## get the status of the clients connected to server
-    rows = db.selectAllClients()
-    connJson = []
-    for row in rows:
-        ip = db.int2ip(row[1])
-        myjson = {  "HostName" : row[0], 
-                    "ClientIP" : ip,
-                    "ClientStatus" : row[2]}
-        # print(row)
-        connJson.append(myjson)
-    return connJson
+# @app.get("/status/")
+# async def getStatus():
+#     # serverstatus.getStats()
+#     ## get the status of the clients connected to server
+#     rows = db.selectAllClients()
+#     connJson = []
+#     for row in rows:
+#         ip = db.int2ip(row[1])
+#         myjson = {  "HostName" : row[0], 
+#                     "ClientIP" : ip,
+#                     "ClientStatus" : row[2]}
+#         # print(row)
+#         connJson.append(myjson)
+#     return connJson
 
 # @app.post("/files/")
 # async def create_file(file: bytes = File(...)):
@@ -60,8 +62,10 @@ async def get_body(request: Request):
             jsonString = json.dumps(await request.json())
             ### Converts json to dict  
             jsonDict = json.loads(jsonString)
+            hash_value = hash(jsonString)
+            print(hash_value)
         except:
-            return {"message" : "probably no proper json"}
+            raise HTTPException(status_code=404, detail="Not proper json")
         ### will remove the fileName before creating the YAML file 
         ### yaml file for executing robot variable need to be at the top level
         ### if the file name in not in the original json a below msg is returned
@@ -70,12 +74,12 @@ async def get_body(request: Request):
             del jsonDict['FileName']
             # print(jsonDict)
         except:
-            return {"message" : "robot file name not found"}
+            raise HTTPException(status_code=404, detail="robot file not found")
         try:
             ### write yaml to tmp file
             yaml.dump(jsonDict, f)
         except:
-            return {"message" : "Not able create the YAML file"}
+            raise HTTPException(status_code=404, detail="Not able to create YAML")
         
         ### call the run rpa bot
         f.close()
@@ -83,25 +87,25 @@ async def get_body(request: Request):
             # print("running robot ... ")
             ### get the timestamp before rpa call
             rpaCallTime= datetime.timestamp(datetime.now())
-            await run_rpabot(fileName)
+            await run_rpabot(fileName, hash_value)
 
-            # print(rpaCallTime)
-            ### get the output.xml files timestamp from os
-            timesOutputXML = os.path.getmtime('output.xml')
-            # print(timesOutputXML)
+            # # print(rpaCallTime)
+            # ### get the output.xml files timestamp from os
+            # timesOutputXML = os.path.getmtime('output.xml')
+            # # print(timesOutputXML)
 
-            ### raises error if cannot run robot
-            ### if rpa call time is greater than the output.xml --> the file was created from another run
-            if rpaCallTime > timesOutputXML: 
-                raise Exception(".. cannot run ... ")
+            # ### raises error if cannot run robot
+            # ### if rpa call time is greater than the output.xml --> the file was created from another run
+            # if rpaCallTime > timesOutputXML: 
+            #     raise Exception(".. cannot run ... ")
 
-            with open('output.xml', 'r') as xml:
+            with open((str(hash_value)+'.xml'), 'r') as xml:
                 data = xml.read()
                 # print(data)
                 xml.close()
                 return Response(content=data, media_type="application/xml")
         except:
-            return {"message" : "not able to run robot"}
+            raise HTTPException(status_code=404, detail="cannot run robot")
 
         # try:
         #     with open('output.xml', 'r') as xml:
@@ -132,12 +136,14 @@ async def read_yaml():
 
 
 ### run the robot        
-async def run_rpabot(filename):    
+async def run_rpabot(filename, filehash): 
+    robotfilename = "./robotscripts/" + filename 
+    filehash = str(filehash) + '.xml' 
     try:
         # robot.run_cli(['-Vtmp.yaml', filename], exit=False)
-        robot.run(filename, variablefile='tmp.yaml')
+        robot.run(robotfilename, variablefile='tmp.yaml', output=filehash)
     except:
-        return {"message" : "ERROR"}
+        raise HTTPException(status_code=404, detail="ERROR - cannot run robot")
     return None
 
 

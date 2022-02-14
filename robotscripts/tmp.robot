@@ -8,5 +8,5 @@ Login as user
     # Input text    id:password     ${PASSWORD}
     # Open Browser     https://example.com  ff  service_log_path=${{os.path.devnull}}
     # Sleep   10s
-    Open Browser     ${urlname}   headlessfirefox  service_log_path=${{os.path.devnull}}
+    Open Browser     ${SERVER}   headlessfirefox  service_log_path=${{os.path.devnull}}
     Close Browser

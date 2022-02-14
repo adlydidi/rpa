@@ -12,7 +12,7 @@ ${BROWSER}                  chrome
 *** Keywords ***
 Start Browser
     [Documentation]         Start firefox browser on selenium grid
-    Open Browser            ${SERVER}   ${BROWSER}   None  https://selenium.dev.bml.com.mv/wd/hub
+    Open Browser            ${SERVER}   ${BROWSER}   None  http://selenium-hub:4444/wd/hub
 
 *** Test Cases ***
 Check page title
