@@ -8,14 +8,11 @@ Suite Teardown              Close Browser
 *** Variables ***
 ${SERVER}                   http://www.google.com
 ${BROWSER}                  chrome
-${Username}                 CRMUSER
-${Password}                 Welcome01
 
 *** Keywords ***
 Start Browser
     [Documentation]         Start firefox browser on selenium grid
     Open Browser            ${SERVER}   ${BROWSER}   None  http://selenium-hub:4444/wd/hub
-    # Open Browser            ${SERVER}   ${BROWSER}   # None  http://selenium-hub:4444/wd/hub
 
 *** Test Cases ***
 Check page title

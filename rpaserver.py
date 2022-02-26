@@ -1,13 +1,9 @@
 from datetime import datetime
+from getpass import getuser
 from importlib.resources import path
-import json
-import os
-import re
-from fastapi import FastAPI, Request, Response,  HTTPException
-import robot
-# import database as db
-import yaml
-import uvicorn
+import json, aiofiles, robot, yaml, uvicorn, sqlite3, sqldb as db, os
+from socket import timeout
+from fastapi import FastAPI, Request, Response,  HTTPException, File, UploadFile
 
 
 app = FastAPI()
@@ -20,29 +16,7 @@ async def read_root():
     return {"hello" : "hello RPA"}
 
 
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: Optional[str] = None):
-#     print(q)
-#     return {"item_id": item_id, "q": q}
-
-# @app.get("/status/")
-# async def getStatus():
-#     # serverstatus.getStats()
-#     ## get the status of the clients connected to server
-#     rows = db.selectAllClients()
-#     connJson = []
-#     for row in rows:
-#         ip = db.int2ip(row[1])
-#         myjson = {  "HostName" : row[0], 
-#                     "ClientIP" : ip,
-#                     "ClientStatus" : row[2]}
-#         # print(row)
-#         connJson.append(myjson)
-#     return connJson
-
-# @app.post("/files/")
-# async def create_file(file: bytes = File(...)):
-#     return {"file_size": len(file)}
+#### 
 
 # @app.get("/runrpa/")
 # async def run_rpa():
@@ -63,18 +37,26 @@ async def get_body(request: Request):
             ### Converts json to dict  
             jsonDict = json.loads(jsonString)
             hash_value = hash(jsonString)
-            print(hash_value)
+            # print(hash_value)
+            # print(jsonDict)
         except:
             raise HTTPException(status_code=404, detail="Not proper json")
         ### will remove the fileName before creating the YAML file 
         ### yaml file for executing robot variable need to be at the top level
         ### if the file name in not in the original json a below msg is returned
-        try:
-            fileName = jsonDict['FileName']
-            del jsonDict['FileName']
-            # print(jsonDict)
-        except:
-            raise HTTPException(status_code=404, detail="robot file not found")
+        # try:
+        fileName = jsonDict['FileName']
+        del jsonDict['FileName']
+        # vigetUserfromDB(fileName)
+        dbresult = db.read_data_from_db()
+        print(dbresult[0][2])
+        jsonDict['Username'] = dbresult[0][1]
+        jsonDict['Password'] = dbresult[0][2]
+
+        # print(robotUserName, robotPassword)
+        # print(jsonDict)
+        # except:
+        #     raise HTTPException(status_code=404, detail="robot file not found")
         try:
             ### write yaml to tmp file
             yaml.dump(jsonDict, f)
@@ -142,11 +124,29 @@ async def run_rpabot(filename, filehash):
     try:
         # robot.run_cli(['-Vtmp.yaml', filename], exit=False)
         robot.run(robotfilename, variablefile='tmp.yaml', output=filehash)
+        try:
+            os.remove('tmp.yaml')
+        except:
+            return {"Result" : "error"}
     except:
         raise HTTPException(status_code=404, detail="ERROR - cannot run robot")
     return None
 
 
+# @app.post("/files/")
+# async def create_file(file: bytes = File(...)):
+#     return {"file_size": len(file)}
 
+
+@app.post("/uploadfile/")
+async def post_endpoint(in_file: UploadFile=File(...)):
+    # ...
+    async with aiofiles.open("./robotscripts/" + in_file.filename, 'wb') as out_file:
+        content = await in_file.read()  # async read
+        await out_file.write(content)  # async write
+
+    return {"Result": "OK"}
+
+    
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8881)
+    uvicorn.run(app, host="0.0.0.0", port=8881, timeout_keep_alive=300)
